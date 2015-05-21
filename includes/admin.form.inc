@@ -15,7 +15,7 @@
  * @return array
  *   An array representing the administration form.
  */
-function islandora_restricted_admin_form($form, $form_state) {
+function islandora_restricted_admin_form($form, &$form_state) {
   $form['islandora_restricted_state_field'] = array(
     '#type' => 'textfield',
     '#title' => t('Solr security state field'),
@@ -39,6 +39,12 @@ function islandora_restricted_admin_form($form, $form_state) {
       'islandora_restricted_acces_denied_redirect',
       ''
     ),
+  );
+  $form['islandora_restricted_redirect_login'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Restricted access login page'),
+    '#description' => t('URL of a page with a login block to send anonymous users, this can provide different information from the "Access denied redirect" page.'),
+    '#default_value' => variable_get('islandora_restricted_redirect_login', ''),
   );
   return system_settings_form($form);
 }

@@ -44,7 +44,10 @@ function islandora_restricted_ingest_form_submit(array $form, array &$form_state
     $parent = islandora_object_load($form_state['islandora']['shared_storage']['parent']);
     $ingesting_restrictions = islandora_restricted_retrieve_restrictions($parent);
     $ingesting_object = $form_state['islandora']['objects'][0];
-    $ingesting_restrictions['state'] = 'restricted';
+    // We want it restricted, unless it is hidden.
+    if ($ingesting_restrictions['state'] == 'hidden') {
+      $ingesting_restrictions['state'] = 'restricted';
+    }
     $user_uri = islandora_restricted_create_uri_link($user->uid, 'user');
     if (!in_array($user_uri, $ingesting_restrictions['restricted']['users'])) {
       $ingesting_restrictions['restricted']['users'][] = $user_uri;
@@ -66,7 +69,7 @@ function islandora_restricted_ingest_form_submit(array $form, array &$form_state
  * @return array
  *   An array representing the manage form.
  */
-function islandora_restricted_manage_form($form, $form_state, AbstractObject $object) {
+function islandora_restricted_manage_form($form, &$form_state, AbstractObject $object) {
   module_load_include('inc', 'islandora_restricted', 'includes/utilities');
   module_load_include('inc', 'islandora_restricted', 'includes/batch');
   // This currently retrieves all restrictions placed on the object which
@@ -218,7 +221,7 @@ function islandora_restricted_manage_form($form, $form_state, AbstractObject $ob
  * @param array $form_state
  *   An array containing the Drupal form state.
  */
-function islandora_restricted_manage_form_submit($form, $form_state) {
+function islandora_restricted_manage_form_submit($form, &$form_state) {
   module_load_include('inc', 'islandora_restricted', 'includes/utilities');
   $object = menu_get_object('islandora_object', '2');
   // Do submit things.
